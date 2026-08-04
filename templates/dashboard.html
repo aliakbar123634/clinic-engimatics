@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .card-hover:hover{
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <div class="flex min-h-screen">
+
+
+
+        <!-- SIDEBAR -->
+        <aside class="w-72 bg-slate-950 text-white flex flex-col justify-between p-6 shadow-2xl">
+
+
+            <div>
+
+                <!-- LOGO -->
+                <div class="mb-14">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
+                            👁️
+                        </div>
+
+                        <div>
+
+                            <h1 class="text-3xl font-black">
+                                EyeCare Pro
+                            </h1>
+
+                            <p class="text-slate-400 mt-1 text-sm">
+                                Clinic Management
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+                <!-- NAVIGATION -->
+                <nav class="space-y-4">
+
+                    <a href="{% url 'dashboard' %}"
+                       class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl font-semibold shadow-lg">
+
+                        <span class="text-xl">📊</span>
+
+                        Dashboard
+
+                    </a>
+
+
+
+                    <a href="{% url 'patient_list' %}"
+                       class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl font-medium text-slate-300 smooth">
+
+                        <span class="text-xl">👨‍⚕️</span>
+
+                        Patients
+
+                    </a>
+
+
+
+                    <a href="{% url 'medicine_list' %}"
+                       class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl font-medium text-slate-300 smooth">
+
+                        <span class="text-xl">💊</span>
+
+                        Medicines
+
+                    </a>
+
+
+
+
+                    <a href="{% url 'create_prescription' %}"
+                       class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl font-medium text-slate-300 smooth">
+
+                        <span class="text-xl">📄</span>
+
+                        Prescriptions
+
+                    </a>
+
+                </nav>
+
+            </div>
+
+
+
+
+
+            <!-- PROFILE -->
+            <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+                <p class="text-slate-400 text-sm">
+                    Logged In As
+                </p>
+
+                <h3 class="font-bold text-lg mt-2">
+                    {{ request.user.username }}
+                </h3>
+
+                <p class="text-blue-400 text-sm mt-1">
+                    {{ user_role }}
+                </p>
+
+
+
+                {% comment %} <a href="{% url 'logout' %}"
+                   class="block text-center mt-5 bg-red-500 hover:bg-red-600 smooth text-white py-3 rounded-2xl font-semibold">
+
+                    Logout
+
+                </a> {% endcomment %}
+                <form method="POST"
+                     action="{% url 'logout' %}"
+                    class="mt-5">
+
+                    {% csrf_token %}
+
+                        <button type="submit"
+                        class="w-full flex items-center justify-center gap-3 bg-red-500 hover:bg-red-600 active:scale-[0.98] transition duration-300 text-white py-3 rounded-2xl font-semibold shadow-lg">
+
+                            <span class="text-lg">
+                                🚪
+                            </span>
+
+                            Logout
+
+                        </button>
+ 
+                    </form>
+
+            </div>
+
+        </aside>
+
+
+
+
+
+
+
+        <!-- MAIN -->
+        <main class="flex-1 p-8 overflow-y-auto">
+
+
+                                <!-- MESSAGES -->
+{% if messages %}
+
+    <div class="mb-8 space-y-4">
+
+        {% for message in messages %}
+
+            <div class="px-6 py-5 rounded-2xl font-bold shadow-lg
+
+                {% if message.tags == 'success' %}
+                    bg-emerald-100 text-emerald-700 border border-emerald-200
+                {% elif message.tags == 'error' %}
+                    bg-red-100 text-red-700 border border-red-200
+                {% else %}
+                    bg-blue-100 text-blue-700 border border-blue-200
+                {% endif %}
+            ">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+
+
+            <!-- TOP -->
+            <div class="flex justify-between items-center mb-10">
+
+                <div>
+
+                    <h1 class="text-5xl font-black text-slate-900">
+                        Dashboard
+                    </h1>
+
+                    <p class="text-slate-500 mt-3 text-lg">
+
+                        Welcome back,
+                        {{ request.user.username }} 👋
+
+                    </p>
+
+                </div>
+
+
+
+                {% comment %} <div class="flex items-center gap-4">
+
+                    {% if is_admin %}
+                    <a href="{% url 'add_patient' %}"
+                       class="bg-blue-600 hover:bg-blue-700 smooth text-white px-6 py-4 rounded-2xl font-bold shadow-lg">
+
+                        + Add Patient
+
+                    </a>
+                {% endif %}
+
+                    <a href="{% url 'create_prescription' %}"
+                       class="bg-slate-900 hover:bg-black smooth text-white px-6 py-4 rounded-2xl font-bold shadow-lg">
+
+                        Create Prescription
+
+                    </a>
+
+                </div> {% endcomment %}
+                <div class="flex items-center gap-4 flex-wrap">
+
+
+
+
+
+    {% if is_admin %}
+
+    <!-- ADD PATIENT -->
+    <a href="{% url 'add_patient' %}"
+
+       class="bg-blue-600 hover:bg-blue-700 smooth text-white px-6 py-4 rounded-2xl font-bold shadow-lg">
+
+        + Add Patient
+
+    </a>
+
+
+
+
+
+    <!-- BACKUP DATABASE -->
+    <a href="{% url 'backup_database' %}"
+
+       class="bg-emerald-500 hover:bg-emerald-600 smooth text-white px-6 py-4 rounded-2xl font-bold shadow-lg">
+
+        Backup Database
+
+    </a>
+
+    {% endif %}
+
+
+
+
+
+
+
+    <!-- CREATE PRESCRIPTION -->
+    <a href="{% url 'create_prescription' %}"
+
+       class="bg-slate-900 hover:bg-black smooth text-white px-6 py-4 rounded-2xl font-bold shadow-lg">
+
+        Create Prescription
+
+    </a>
+
+</div>
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+            <!-- STATS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-10">
+
+
+
+                <!-- PATIENTS -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 smooth card-hover">
+
+                    <div class="flex justify-between items-center">
+
+                        <div>
+
+                            <p class="text-slate-500 font-medium">
+                                Total Patients
+                            </p>
+
+                            <h2 class="text-5xl font-black mt-4 text-slate-900">
+                                {{ total_patients }}
+                            </h2>
+
+                        </div>
+
+                        <div class="w-20 h-20 rounded-3xl bg-blue-100 flex items-center justify-center text-4xl">
+                            👨‍⚕️
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+                <!-- VISITS -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 smooth card-hover">
+
+                    <div class="flex justify-between items-center">
+
+                        <div>
+
+                            <p class="text-slate-500 font-medium">
+                                Total Visits
+                            </p>
+
+                            <h2 class="text-5xl font-black mt-4 text-slate-900">
+                                {{ total_visits }}
+                            </h2>
+
+                        </div>
+
+                        <div class="w-20 h-20 rounded-3xl bg-emerald-100 flex items-center justify-center text-4xl">
+                            📅
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+                <!-- PRESCRIPTIONS -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 smooth card-hover">
+
+                    <div class="flex justify-between items-center">
+
+                        <div>
+
+                            <p class="text-slate-500 font-medium">
+                                Prescriptions
+                            </p>
+
+                            <h2 class="text-5xl font-black mt-4 text-slate-900">
+                                {{ total_prescriptions }}
+                            </h2>
+
+                        </div>
+
+                        <div class="w-20 h-20 rounded-3xl bg-purple-100 flex items-center justify-center text-4xl">
+                            💊
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- CONTENT GRID -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+
+
+                <!-- LEFT -->
+                <div class="xl:col-span-2 space-y-8">
+
+
+
+                    <!-- RECENT PATIENTS -->
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+
+                        <div class="flex justify-between items-center p-8 border-b border-slate-100">
+
+                            <div>
+
+                                <h2 class="text-2xl font-black text-slate-900">
+                                    Recent Patients
+                                </h2>
+
+                                <p class="text-slate-500 mt-1">
+                                    Latest registered patients
+                                </p>
+
+                            </div>
+
+
+                            <a href="{% url 'patient_list' %}"
+                               class="bg-blue-600 hover:bg-blue-700 smooth text-white px-5 py-3 rounded-2xl font-semibold">
+
+                                View All
+
+                            </a>
+
+                        </div>
+
+
+
+
+
+                        <div class="overflow-x-auto">
+
+                            <table class="w-full">
+
+                                <thead class="bg-slate-50">
+
+                                    <tr>
+
+                                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                            Patient
+                                        </th>
+
+                                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                            Phone
+                                        </th>
+
+                                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                            Age
+                                        </th>
+
+                                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                            Gender
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+
+
+
+                                <tbody>
+
+                                    {% for patient in recent_patients %}
+
+                                    <tr class="border-b border-slate-100 hover:bg-slate-50 smooth">
+
+                                        <td class="px-8 py-5">
+
+                                            <div class="flex items-center gap-4">
+
+                                                <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center font-bold text-blue-700">
+
+                                                    {{ patient.name|slice:':1' }}
+
+                                                </div>
+
+                                                <div>
+
+                                                    <h4 class="font-bold text-slate-900">
+                                                        {{ patient.name }}
+                                                    </h4>
+
+                                                    <p class="text-slate-400 text-sm">
+                                                        Eye Patient
+                                                    </p>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+                                        <td class="px-8 py-5 text-slate-600">
+                                            {{ patient.phone }}
+                                        </td>
+
+                                        <td class="px-8 py-5 text-slate-600">
+                                            {{ patient.age }}
+                                        </td>
+
+                                        <td class="px-8 py-5">
+
+                                            <span class="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">
+
+                                                {{ patient.gender }}
+
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- RECENT PRESCRIPTIONS -->
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+
+                        <div class="p-8 border-b border-slate-100">
+
+                            <h2 class="text-2xl font-black text-slate-900">
+                                Recent Prescriptions
+                            </h2>
+
+                            <p class="text-slate-500 mt-1">
+                                Latest prescriptions activity
+                            </p>
+
+                        </div>
+
+
+
+
+
+                        <div class="p-8 space-y-5">
+
+                            {% for prescription in recent_prescriptions %}
+
+                            <div class="border border-slate-100 hover:border-blue-200 hover:shadow-lg smooth rounded-3xl p-6 flex justify-between items-center">
+
+                                <div>
+
+                                    <h3 class="text-lg font-bold text-slate-900">
+
+                                        {{ prescription.visit.patient.name }}
+
+                                    </h3>
+
+                                    <p class="text-slate-500 mt-2">
+
+                                        {{ prescription.created_at }}
+
+                                    </p>
+
+                                </div>
+
+
+
+
+                                <div class="flex gap-3">
+
+                                    <a href="{% url 'prescription_detail' prescription.id %}"
+                                       class="bg-slate-900 hover:bg-black smooth text-white px-5 py-3 rounded-2xl font-semibold">
+
+                                        View
+
+                                    </a>
+
+
+
+                                    <a href="{% url 'prescription_pdf' prescription.id %}"
+                                       class="bg-blue-600 hover:bg-blue-700 smooth text-white px-5 py-3 rounded-2xl font-semibold">
+
+                                        PDF
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- RIGHT -->
+                <div class="space-y-8">
+
+
+
+                    <!-- QUICK ACTION -->
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-2xl">
+
+                        <h2 class="text-3xl font-black leading-tight">
+
+                            Fast Workflow ⚡
+
+                        </h2>
+
+                        <p class="mt-5 text-blue-100 leading-relaxed">
+
+                            Search patients,
+                            create prescriptions
+                            and generate PDFs instantly.
+
+                        </p>
+
+
+
+                        <div class="mt-8 space-y-4">
+
+                            {% if is_admin %}
+                            <a href="{% url 'add_patient' %}"
+                               class="block bg-white text-blue-700 hover:bg-slate-100 smooth px-6 py-4 rounded-2xl text-center font-bold">
+
+                                + Add Patient
+
+                            </a>
+                            {% endif %}
+
+
+
+                            <a href="{% url 'create_prescription' %}"
+                               class="block bg-slate-900 hover:bg-black smooth px-6 py-4 rounded-2xl text-center font-bold">
+
+                                Create Prescription
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+                    <!-- SYSTEM STATUS -->
+                    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
+
+                        <h2 class="text-2xl font-black text-slate-900 mb-6">
+
+                            System Status
+
+                        </h2>
+
+
+
+                        <div class="space-y-5">
+
+
+                            <div class="flex justify-between items-center">
+
+                                <span class="text-slate-600 font-medium">
+                                    Database
+                                </span>
+
+                                <span class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl font-bold text-sm">
+
+                                    Active
+
+                                </span>
+
+                            </div>
+
+
+
+
+                            <div class="flex justify-between items-center">
+
+                                <span class="text-slate-600 font-medium">
+                                    PDF Generator
+                                </span>
+
+                                <span class="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-bold text-sm">
+
+                                    Running
+
+                                </span>
+
+                            </div>
+
+
+
+
+
+                            <div class="flex justify-between items-center">
+
+                                <span class="text-slate-600 font-medium">
+                                    Medicine Search
+                                </span>
+
+                                <span class="bg-purple-100 text-purple-700 px-4 py-2 rounded-xl font-bold text-sm">
+
+                                    Fast
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

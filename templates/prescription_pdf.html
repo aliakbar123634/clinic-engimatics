@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Prescription PDF</title>
+
+    <style>
+
+        @page {
+            size: A4;
+            margin: 30px;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            color: #1e293b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .header{
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .clinic-name{
+            font-size: 34px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .clinic-sub{
+            font-size: 15px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .section{
+            margin-bottom: 30px;
+        }
+
+        .section-title{
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 8px;
+        }
+
+        .info-grid{
+            width: 100%;
+        }
+
+        .info-grid td{
+            padding: 10px 0;
+            vertical-align: top;
+        }
+
+        .label{
+            font-weight: bold;
+            color: #334155;
+            width: 180px;
+        }
+
+        .value{
+            color: #0f172a;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th{
+            background: #2563eb;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        table td{
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+        }
+
+        .notes-box{
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .footer{
+            margin-top: 60px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 20px;
+        }
+
+        .signature{
+            margin-top: 70px;
+            text-align: right;
+        }
+
+        .signature-line{
+            margin-top: 50px;
+            border-top: 1px solid #0f172a;
+            width: 220px;
+            margin-left: auto;
+            padding-top: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <script>
+        window.onload = function() {
+        window.print();
+    }
+    </script>    
+
+
+
+<!-- HEADER -->
+<div class="header">
+
+    <div class="clinic-name">
+        EyeCare Pro Clinic
+    </div>
+
+    <div class="clinic-sub">
+        Eye Specialist & Vision Care Center
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- PATIENT INFO -->
+<div class="section">
+
+    <div class="section-title">
+
+        Patient Information
+
+    </div>
+
+
+
+
+
+    <table class="info-grid">
+
+        <tr>
+
+            <td class="label">
+                Patient Name
+            </td>
+
+            <td class="value">
+                {{ prescription.visit.patient.name }}
+            </td>
+
+
+
+
+
+            <td class="label">
+                Phone Number
+            </td>
+
+            <td class="value">
+                {{ prescription.visit.patient.phone }}
+            </td>
+
+        </tr>
+
+
+
+
+
+
+
+        <tr>
+
+            <td class="label">
+                Gender
+            </td>
+
+            <td class="value">
+                {{ prescription.visit.patient.gender }}
+            </td>
+
+
+
+
+
+            <td class="label">
+                Age
+            </td>
+
+            <td class="value">
+                {{ prescription.visit.patient.age }} Years
+            </td>
+
+        </tr>
+
+
+
+
+
+
+
+        <tr>
+
+            <td class="label">
+                Doctor
+            </td>
+
+            <td class="value">
+                Dr. {{ prescription.visit.doctor.username }}
+            </td>
+
+
+
+
+
+            <td class="label">
+                Visit Date
+            </td>
+
+            <td class="value">
+                {{ prescription.visit.visit_date|date:"d M Y h:i A" }}
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- COMPLAINTS -->
+<div class="section">
+
+    <div class="section-title">
+
+        Complaints
+
+    </div>
+
+
+
+    <div class="notes-box">
+
+        {{ prescription.visit.complaints|default:"No complaints added." }}
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- DIAGNOSIS -->
+<div class="section">
+
+    <div class="section-title">
+
+        Diagnosis
+
+    </div>
+
+
+
+    <div class="notes-box">
+
+        {{ prescription.visit.diagnosis|default:"No diagnosis added." }}
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- MEDICINES -->
+<div class="section">
+
+    <div class="section-title">
+
+        Prescribed Medicines
+
+    </div>
+
+
+
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Medicine
+                </th>
+
+                <th>
+                    Dosage
+                </th>
+
+                <th>
+                    Frequency
+                </th>
+
+                <th>
+                    Duration
+                </th>
+
+                <th>
+                    Notes
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+
+
+
+
+
+
+        <tbody>
+
+            {% for item in items %}
+
+            <tr>
+
+                <td>
+                    {{ item.medicine.name }}
+                </td>
+
+                <td>
+                    {{ item.dosage }}
+                </td>
+
+                <td>
+                    {{ item.frequency }}
+                </td>
+
+                <td>
+                    {{ item.duration }}
+                </td>
+
+                <td>
+                    {{ item.notes|default:"-" }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- INSTRUCTIONS -->
+<div class="section">
+
+    <div class="section-title">
+
+        Additional Instructions
+
+    </div>
+
+
+
+    <div class="notes-box">
+
+        {{ prescription.instructions|default:"No additional instructions added." }}
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- SIGNATURE -->
+<div class="signature">
+
+    <div class="signature-line">
+
+        Doctor Signature
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<!-- FOOTER -->
+<div class="footer">
+
+    EyeCare Pro Clinic • Professional Eye Care Management System
+
+</div>
+
+</body>
+
+</html>

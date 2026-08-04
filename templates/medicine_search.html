@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Search Medicines</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-[#f4f7fb]">
+
+
+
+<div class="p-10">
+
+
+
+    <!-- TOP -->
+    <div class="flex justify-between items-center mb-10">
+
+        <div>
+
+            <h1 class="text-5xl font-black text-slate-900">
+                Search Results
+            </h1>
+
+            <p class="text-slate-500 mt-3 text-lg">
+
+                Results for:
+                <span class="font-bold text-blue-600">
+                    "{{ query }}"
+                </span>
+
+            </p>
+
+        </div>
+
+
+
+        <a href="{% url 'medicine_list' %}"
+           class="bg-slate-900 hover:bg-black text-white px-7 py-4 rounded-2xl font-bold shadow-lg smooth">
+
+            ← Back
+
+        </a>
+
+    </div>
+
+
+
+
+
+
+    <!-- SEARCH BAR -->
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-8">
+
+        <form method="GET"
+              action="{% url 'medicine_search' %}">
+
+            <div class="flex gap-4">
+
+                <input type="text"
+                       name="q"
+                       value="{{ query }}"
+                       placeholder="Search medicine by name, generic or company..."
+                       class="flex-1 bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-2xl font-bold smooth">
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- RESULTS -->
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+
+        <div class="flex justify-between items-center p-8 border-b border-slate-100">
+
+            <div>
+
+                <h2 class="text-2xl font-black text-slate-900">
+                    Medicines Found
+                </h2>
+
+                <p class="text-slate-500 mt-1">
+                    Matching search results
+                </p>
+
+            </div>
+
+
+
+            <div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-bold">
+
+                {{ medicines.count }} Results
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- TABLE -->
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead class="bg-slate-50">
+
+                    <tr>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Medicine
+                        </th>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Generic
+                        </th>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Company
+                        </th>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Price
+                        </th>
+
+                        <th class="text-center px-8 py-5 text-slate-500 font-semibold">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+
+
+
+
+
+
+                <tbody>
+
+                    {% for medicine in medicines %}
+
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 smooth">
+
+                        <td class="px-8 py-6">
+
+                            <div class="flex items-center gap-4">
+
+                                <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
+
+                                    💊
+
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-bold text-slate-900 text-lg">
+                                        {{ medicine.name }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+
+
+
+
+                        <td class="px-8 py-6 text-slate-600">
+
+                            {{ medicine.generic_name|default:"-" }}
+
+                        </td>
+
+
+
+
+
+
+                        <td class="px-8 py-6 text-slate-600">
+
+                            {{ medicine.company|default:"-" }}
+
+                        </td>
+
+
+
+
+
+
+                        <td class="px-8 py-6">
+
+                            <span class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-sm font-bold">
+
+                                Rs. {{ medicine.price }}
+
+                            </span>
+
+                        </td>
+
+
+
+
+
+
+                        <td class="px-8 py-6">
+
+                            <div class="flex items-center justify-center gap-3">
+                                {% if is_admin %}
+                                <a href="{% url 'update_medicine' medicine.id %}"
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl text-sm font-semibold smooth">
+
+                                    Edit
+
+                                </a>
+
+
+
+                                <a href="{% url 'delete_medicine' medicine.id %}"
+                                   class="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-2xl text-sm font-semibold smooth">
+
+                                    Delete
+
+                                </a>
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+
+
+
+
+
+                    <!-- EMPTY -->
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center py-20">
+
+                            <div class="flex flex-col items-center">
+
+                                <div class="text-7xl mb-5">
+                                    💊
+                                </div>
+
+                                <h2 class="text-3xl font-black text-slate-900">
+                                    No Medicines Found
+                                </h2>
+
+                                <p class="text-slate-500 mt-3">
+
+                                    No medicine matched your search
+
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

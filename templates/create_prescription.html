@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Prescription - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white p-6 flex flex-col justify-between shadow-2xl">
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl">
+                        👁️
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 text-sm mt-1">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    📊 Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    👨‍⚕️ Patients
+
+                </a>
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    💊 Medicines
+
+                </a>
+
+
+
+                <a href="{% url 'visit_list' %}"
+                   class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    📄 Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-blue-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+
+
+        <!-- TOP -->
+        <div class="mb-10">
+
+            <h1 class="text-5xl font-black text-slate-900">
+
+                Create Prescription
+
+            </h1>
+
+            {% if error %}
+
+            <div class="mt-5 bg-red-100 border border-red-200 text-red-700 rounded-3xl px-6 py-4">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+            <p class="text-slate-500 mt-3 text-lg">
+
+                Create patient prescription & medicines
+
+            </p>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- FORM -->
+        <form method="POST"
+              class="space-y-8">
+
+            {% csrf_token %}
+
+
+
+
+
+
+
+            <!-- VISIT INFO -->
+            <div class="bg-white rounded-[35px] shadow-xl border border-slate-100 overflow-hidden">
+
+                <div class="px-10 py-7 border-b border-slate-100 bg-slate-50">
+
+                    <h2 class="text-3xl font-black text-slate-900">
+
+                        Patient Visit Information
+
+                    </h2>
+
+                </div>
+
+
+
+
+
+
+
+                <div class="p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+
+
+                    <!-- PATIENT -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Select Patient
+
+                        </label>
+
+                        <select name="patient"
+
+                                class="w-full bg-slate-100 rounded-2xl px-5 py-5 outline-none focus:ring-4 focus:ring-blue-200 text-lg">
+
+                            <option value="">
+                                Choose Patient
+                            </option>
+
+                            {% for patient in visit_form.patient.field.queryset %}
+
+                                <option value="{{ patient.id }}">
+
+                                    {{ patient.name }} - {{ patient.phone }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- COMPLAINTS -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Complaints
+
+                        </label>
+
+                        <textarea
+                            name="complaints"
+                            rows="4"
+                            placeholder="Patient complaints..."
+
+                            class="w-full bg-slate-100 rounded-2xl px-5 py-5 outline-none focus:ring-4 focus:ring-blue-200 resize-none"></textarea>
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- DIAGNOSIS -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Diagnosis
+
+                        </label>
+
+                        <textarea
+                            name="diagnosis"
+                            rows="4"
+                            placeholder="Diagnosis..."
+
+                            class="w-full bg-slate-100 rounded-2xl px-5 py-5 outline-none focus:ring-4 focus:ring-blue-200 resize-none"></textarea>
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- NOTES -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Doctor Notes
+
+                        </label>
+
+                        <textarea
+                            name="notes"
+                            rows="4"
+                            placeholder="Additional notes..."
+
+                            class="w-full bg-slate-100 rounded-2xl px-5 py-5 outline-none focus:ring-4 focus:ring-blue-200 resize-none"></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- MEDICINES -->
+            <div class="bg-white rounded-[35px] shadow-xl border border-slate-100 overflow-hidden">
+
+                <div class="flex justify-between items-center px-10 py-7 border-b border-slate-100 bg-slate-50">
+
+                    <h2 class="text-3xl font-black text-slate-900">
+
+                        Prescription Medicines
+
+                    </h2>
+
+
+
+                    <button type="button"
+                            onclick="addMedicineRow()"
+
+                            class="bg-blue-600 hover:bg-blue-700 smooth text-white px-6 py-3 rounded-2xl font-bold shadow-lg">
+
+                        + Add Medicine
+
+                    </button>
+
+                </div>
+
+
+
+
+
+
+
+                <div id="medicineContainer"
+                     class="p-10 space-y-8">
+
+
+
+                    <!-- MEDICINE ROW -->
+                    <div class="medicineRow border border-slate-200 rounded-3xl p-8 bg-slate-50 relative">
+
+
+
+
+                        <!-- REMOVE -->
+                        <button type="button"
+                                onclick="removeMedicineRow(this)"
+
+                                class="absolute top-5 right-5 bg-red-500 hover:bg-red-600 text-white w-10 h-10 rounded-xl font-bold">
+
+                            ×
+
+                        </button>
+
+
+
+
+
+
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+
+
+
+                            <!-- MEDICINE -->
+                            <div>
+
+                                <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                                    Medicine
+
+                                </label>
+
+                                <select name="medicine"
+
+                                        class="w-full bg-white rounded-2xl px-4 py-4 outline-none focus:ring-4 focus:ring-blue-200">
+
+                                    <option value="">
+                                        Select Medicine
+                                    </option>
+
+                                    {% for medicine in medicines %}
+
+                                        <option value="{{ medicine.id }}">
+
+                                            {{ medicine.name }}
+
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+
+
+
+
+
+
+                            <!-- DOSAGE -->
+                            <div>
+
+                                <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                                    Dosage
+
+                                </label>
+
+                                <input type="text"
+                                       name="dosage"
+                                       placeholder="1 Tablet"
+
+                                       class="w-full bg-white rounded-2xl px-4 py-4 outline-none focus:ring-4 focus:ring-blue-200">
+
+                            </div>
+
+
+
+
+
+
+
+                            <!-- FREQUENCY -->
+                            <div>
+
+                                <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                                    Frequency
+
+                                </label>
+
+                                <input type="text"
+                                       name="frequency"
+                                       placeholder="2 Times Daily"
+
+                                       class="w-full bg-white rounded-2xl px-4 py-4 outline-none focus:ring-4 focus:ring-blue-200">
+
+                            </div>
+
+
+
+
+
+
+
+                            <!-- DURATION -->
+                            <div>
+
+                                <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                                    Duration
+
+                                </label>
+
+                                <input type="text"
+                                       name="duration"
+                                       placeholder="5 Days"
+
+                                       class="w-full bg-white rounded-2xl px-4 py-4 outline-none focus:ring-4 focus:ring-blue-200">
+
+                            </div>
+
+
+
+
+
+
+
+                            <!-- NOTES -->
+                            <div>
+
+                                <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                                    Notes
+
+                                </label>
+
+                                <input type="text"
+                                       name="notes"
+                                       placeholder="After Meal"
+
+                                       class="w-full bg-white rounded-2xl px-4 py-4 outline-none focus:ring-4 focus:ring-blue-200">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- INSTRUCTIONS -->
+            <div class="bg-white rounded-[35px] shadow-xl border border-slate-100 overflow-hidden">
+
+                <div class="px-10 py-7 border-b border-slate-100 bg-slate-50">
+
+                    <h2 class="text-3xl font-black text-slate-900">
+
+                        Additional Instructions
+
+                    </h2>
+
+                </div>
+
+
+
+
+
+
+
+                <div class="p-10">
+
+                    <textarea
+                        name="instructions"
+                        rows="6"
+                        placeholder="Write additional instructions..."
+
+                        class="w-full bg-slate-100 rounded-2xl px-6 py-5 outline-none focus:ring-4 focus:ring-blue-200 resize-none text-lg"></textarea>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- BUTTON -->
+            <div class="flex justify-end">
+
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 smooth text-white px-10 py-5 rounded-2xl font-black shadow-2xl text-lg">
+
+                    Save Prescription
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+
+
+
+
+
+
+
+<script>
+
+function addMedicineRow(){
+
+    let container = document.getElementById('medicineContainer');
+
+    let firstRow = document.querySelector('.medicineRow');
+
+    let newRow = firstRow.cloneNode(true);
+
+    newRow.querySelectorAll('input').forEach(input => {
+
+        input.value = '';
+
+    });
+
+    newRow.querySelectorAll('select').forEach(select => {
+
+        select.selectedIndex = 0;
+
+    });
+
+    container.appendChild(newRow);
+}
+
+
+
+function removeMedicineRow(button){
+
+    let rows = document.querySelectorAll('.medicineRow');
+
+    if(rows.length > 1){
+
+        button.closest('.medicineRow').remove();
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>

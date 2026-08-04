@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Patients - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover{
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white flex flex-col justify-between p-6 shadow-2xl">
+
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
+                        👁️
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 mt-1 text-sm">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📊</span>
+
+                    Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    <span class="text-xl">👨‍⚕️</span>
+
+                    Patients
+
+                </a>
+
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">💊</span>
+
+                    Medicines
+
+                </a>
+
+
+
+
+                <a href="{% url 'create_prescription' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📄</span>
+
+                    Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-blue-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+
+
+            <form method="POST"
+                  action="{% url 'logout' %}"
+                  class="mt-5">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="w-full bg-red-500 hover:bg-red-600 smooth text-white py-3 rounded-2xl font-semibold shadow-lg">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+
+
+        <!-- TOP -->
+        <div class="flex justify-between items-center mb-10">
+
+            <div>
+
+                <h1 class="text-5xl font-black text-slate-900">
+                    Patients
+                </h1>
+
+                <p class="text-slate-500 mt-3 text-lg">
+
+                    Manage all clinic patients here
+
+                </p>
+
+            </div>
+
+
+
+
+            <div class="flex gap-4">
+                {% if is_admin %}
+                <a href="{% url 'add_patient' %}"
+                   class="bg-blue-600 hover:bg-blue-700 smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                    + Add Patient
+
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+        <!-- LIVE SEARCH -->
+<div class="relative w-full mb-8">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search patient by name or phone..."
+        autocomplete="off"
+
+        class="w-full bg-white border border-slate-200 rounded-3xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200 shadow-xl"
+    >
+
+
+
+
+    <!-- DROPDOWN -->
+    <div id="searchResults"
+
+         class="absolute top-full left-0 w-full bg-white shadow-2xl rounded-3xl mt-3 overflow-hidden z-50 hidden border border-slate-200">
+
+    </div>
+
+</div>
+
+
+
+
+        <!-- TABLE -->
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+
+
+
+            <!-- HEADER -->
+            <div class="flex justify-between items-center p-8 border-b border-slate-100">
+
+                <div>
+
+                    <h2 class="text-2xl font-black text-slate-900">
+                        All Patients
+                    </h2>
+
+                    <p class="text-slate-500 mt-1">
+                        Total registered patients list
+                    </p>
+
+                </div>
+
+
+
+                <div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-bold">
+
+                    {{ patients.count }} Patients
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-slate-50">
+
+                        <tr>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Patient
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Phone
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Age
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Gender
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Created
+                            </th>
+
+                            <th class="text-center px-8 py-5 text-slate-500 font-semibold">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+
+
+
+
+                    <tbody>
+
+                        {% for patient in patients %}
+
+                        <tr class="border-b border-slate-100 hover:bg-slate-50 smooth">
+
+
+                            <!-- NAME -->
+                            <td class="px-8 py-6">
+
+                                <div class="flex items-center gap-4">
+
+                                    <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
+
+                                        {{ patient.name|slice:':1' }}
+
+                                    </div>
+
+                                    <div>
+
+                                        <h3 class="font-bold text-slate-900 text-lg">
+                                            {{ patient.name }}
+                                        </h3>
+
+                                        <p class="text-slate-400 text-sm">
+                                            Eye Patient
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+
+
+                            <!-- PHONE -->
+                            <td class="px-8 py-6 text-slate-600 font-medium">
+
+                                {{ patient.phone }}
+
+                            </td>
+
+
+
+
+
+                            <!-- AGE -->
+                            <td class="px-8 py-6 text-slate-600 font-medium">
+
+                                {{ patient.age }}
+
+                            </td>
+
+
+
+
+
+                            <!-- GENDER -->
+                            <td class="px-8 py-6">
+
+                                <span class="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">
+
+                                    {{ patient.gender }}
+
+                                </span>
+
+                            </td>
+
+
+
+
+
+                            <!-- CREATED -->
+                            <td class="px-8 py-6 text-slate-500">
+
+                                {{ patient.created_at|date:"d M Y" }}
+
+                            </td>
+
+
+
+
+
+
+                            <!-- ACTIONS -->
+                            <td class="px-8 py-6">
+
+                                <div class="flex items-center justify-center gap-3">
+
+
+
+                                    <!-- VIEW -->
+                                    <a href="{% url 'patient_detail' patient.id %}"
+                                       class="bg-slate-900 hover:bg-black smooth text-white px-5 py-3 rounded-2xl font-semibold text-sm">
+
+                                        View
+
+                                    </a>
+
+
+
+
+                                    {% if is_admin %}
+                                    <!-- UPDATE -->
+                                    <a href="{% url 'update_patient' patient.id %}"
+                                       class="bg-blue-600 hover:bg-blue-700 smooth text-white px-5 py-3 rounded-2xl font-semibold text-sm">
+
+                                        Edit
+
+                                    </a>
+
+
+
+
+
+                                    <!-- DELETE -->
+                                    <a href="{% url 'delete_patient' patient.id %}"
+                                       class="bg-red-500 hover:bg-red-600 smooth text-white px-5 py-3 rounded-2xl font-semibold text-sm">
+
+                                        Delete
+
+                                    </a>
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+
+
+                        <!-- EMPTY -->
+                        <tr>
+
+                            <td colspan="6"
+                                class="text-center py-20">
+
+                                <div class="flex flex-col items-center">
+
+                                    <div class="text-7xl mb-5">
+                                        👨‍⚕️
+                                    </div>
+
+                                    <h2 class="text-3xl font-black text-slate-900">
+                                        No Patients Found
+                                    </h2>
+
+                                    <p class="text-slate-500 mt-3">
+
+                                        Start by adding your first patient
+
+                                    </p>
+
+
+
+                                    {% if is_admin %}
+                                    <a href="{% url 'add_patient' %}"
+                                       class="mt-8 bg-blue-600 hover:bg-blue-700 smooth text-white px-8 py-4 rounded-2xl font-bold shadow-lg">
+
+                                        + Add Patient
+
+                                    </a>
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+<script>
+
+const searchInput = document.getElementById('searchInput');
+
+const searchResults = document.getElementById('searchResults');
+
+
+
+
+// LIVE SEARCH
+searchInput.addEventListener('keyup', async function(){
+
+    const query = this.value.trim();
+
+
+
+
+    // EMPTY QUERY
+    if(query.length < 1){
+
+        searchResults.classList.add('hidden');
+
+        searchResults.innerHTML = '';
+
+        return;
+    }
+
+
+
+
+    try{
+
+        const response = await fetch(
+
+            `/patients/live-search/?q=${encodeURIComponent(query)}`
+
+        );
+
+
+
+
+        const data = await response.json();
+
+
+
+
+        searchResults.innerHTML = '';
+
+
+
+
+        // RESULTS FOUND
+        if(data.length > 0){
+
+            searchResults.classList.remove('hidden');
+
+
+
+
+            data.forEach(patient => {
+
+                searchResults.innerHTML += `
+
+                    <a href="/patients/${patient.id}/"
+
+                       class="flex items-center justify-between px-6 py-5 hover:bg-slate-100 border-b border-slate-100 transition duration-200">
+
+
+
+
+                        <div>
+
+                            <h3 class="font-bold text-slate-900 text-lg">
+
+                                ${patient.name}
+
+                            </h3>
+
+
+
+
+                            <p class="text-sm text-slate-500 mt-1">
+
+                                ${patient.phone}
+
+                            </p>
+
+                        </div>
+
+
+
+
+
+
+                        <div class="flex gap-2">
+
+                            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-xl text-sm font-semibold">
+
+                                ${patient.gender}
+
+                            </span>
+
+
+
+
+                            <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-xl text-sm font-semibold">
+
+                                ${patient.age}y
+
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                `;
+            });
+
+        }
+
+
+
+
+        // NO RESULT
+        else{
+
+            searchResults.classList.remove('hidden');
+
+            searchResults.innerHTML = `
+
+                <div class="p-6 text-center text-slate-500">
+
+                    No Patient Found
+
+                </div>
+
+            `;
+        }
+
+    }
+
+
+
+
+    catch(error){
+
+        console.log('Search Error:', error);
+
+    }
+
+});
+
+
+
+
+
+
+
+
+// OUTSIDE CLICK
+document.addEventListener('click', function(event){
+
+    if(
+
+        !searchInput.contains(event.target) &&
+        !searchResults.contains(event.target)
+
+    ){
+
+        searchResults.classList.add('hidden');
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

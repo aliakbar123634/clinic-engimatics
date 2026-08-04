@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Delete Patient - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white flex flex-col justify-between p-6 shadow-2xl">
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
+                        👁️
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 mt-1 text-sm">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📊</span>
+
+                    Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 bg-red-500 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    <span class="text-xl">🗑️</span>
+
+                    Delete Patient
+
+                </a>
+
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">💊</span>
+
+                    Medicines
+
+                </a>
+
+
+
+
+                <a href="{% url 'create_prescription' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📄</span>
+
+                    Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-red-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+
+
+            <form method="POST"
+                  action="{% url 'logout' %}"
+                  class="mt-5">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="w-full bg-red-500 hover:bg-red-600 smooth text-white py-3 rounded-2xl font-semibold shadow-lg">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 flex items-center justify-center p-10">
+
+
+
+        <!-- DELETE CARD -->
+        <div class="w-full max-w-3xl bg-white rounded-[40px] shadow-2xl border border-red-100 overflow-hidden">
+
+
+
+            <!-- HEADER -->
+            <div class="bg-gradient-to-r from-red-500 to-red-600 px-10 py-10 text-white text-center">
+
+                <div class="w-28 h-28 mx-auto rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center text-6xl shadow-2xl">
+
+                    ⚠️
+
+                </div>
+
+
+
+                <h1 class="text-5xl font-black mt-8">
+                    Delete Patient
+                </h1>
+
+                <p class="text-red-100 text-xl mt-4 leading-relaxed">
+
+                    This action cannot be undone
+
+                </p>
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- BODY -->
+            <div class="p-12">
+
+
+
+                <!-- WARNING -->
+                <div class="bg-red-50 border border-red-100 rounded-3xl p-8">
+
+                    <div class="flex items-start gap-5">
+
+                        <div class="text-5xl">
+                            🚨
+                        </div>
+
+                        <div>
+
+                            <h2 class="text-3xl font-black text-red-900">
+
+                                Are You Sure?
+
+                            </h2>
+
+                            <p class="text-red-700 text-lg leading-relaxed mt-5">
+
+                                You are about to permanently delete this patient record.
+                                All related data, prescriptions and history may also be removed.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- PATIENT INFO -->
+                <div class="mt-10 bg-slate-50 border border-slate-100 rounded-3xl p-8">
+
+
+
+                    <div class="flex items-center gap-6">
+
+
+
+                        <!-- AVATAR -->
+                        <div class="w-24 h-24 rounded-[30px] bg-red-100 flex items-center justify-center text-4xl font-black text-red-700">
+
+                            {{ patient.name|slice:":1" }}
+
+                        </div>
+
+
+
+
+
+                        <!-- INFO -->
+                        <div>
+
+                            <h2 class="text-4xl font-black text-slate-900">
+
+                                {{ patient.name }}
+
+                            </h2>
+
+                            <p class="text-slate-500 text-lg mt-3">
+
+                                {{ patient.phone }}
+
+                            </p>
+
+
+
+                            <div class="flex gap-4 mt-5">
+
+                                <span class="bg-white px-5 py-3 rounded-2xl font-semibold text-slate-700 shadow-sm">
+
+                                    {{ patient.gender }}
+
+                                </span>
+
+
+
+                                <span class="bg-white px-5 py-3 rounded-2xl font-semibold text-slate-700 shadow-sm">
+
+                                    {{ patient.age }} Years
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- BUTTONS -->
+                <div class="flex flex-wrap justify-end gap-5 mt-12">
+
+
+
+                    <!-- CANCEL -->
+                    <a href="{% url 'patient_detail' patient.id %}"
+                       class="bg-slate-200 hover:bg-slate-300 smooth text-slate-700 px-8 py-4 rounded-2xl font-bold">
+
+                        Cancel
+
+                    </a>
+
+
+
+
+
+
+                    <!-- DELETE -->
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="bg-gradient-to-r from-red-500 to-red-600 hover:scale-[1.03] hover:shadow-2xl smooth text-white px-10 py-4 rounded-2xl font-black shadow-xl">
+
+                            Delete Permanently
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

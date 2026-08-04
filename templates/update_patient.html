@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Update Patient - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white flex flex-col justify-between p-6 shadow-2xl">
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
+                        👁️
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 mt-1 text-sm">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📊</span>
+
+                    Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    <span class="text-xl">👨‍⚕️</span>
+
+                    Patients
+
+                </a>
+
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">💊</span>
+
+                    Medicines
+
+                </a>
+
+
+
+
+                <a href="{% url 'create_prescription' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📄</span>
+
+                    Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-blue-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+
+
+            <form method="POST"
+                  action="{% url 'logout' %}"
+                  class="mt-5">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="w-full bg-red-500 hover:bg-red-600 smooth text-white py-3 rounded-2xl font-semibold shadow-lg">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+
+
+        <!-- TOP -->
+        <div class="flex justify-between items-center mb-10">
+
+            <div>
+
+                <h1 class="text-5xl font-black text-slate-900">
+                    Update Patient
+                </h1>
+
+                <p class="text-slate-500 mt-3 text-lg">
+
+                    Edit and update patient information
+
+                </p>
+
+            </div>
+
+
+
+            <a href="{% url 'patient_list' %}"
+               class="bg-slate-900 hover:bg-black smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                ← Back
+
+            </a>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- FORM CARD -->
+        <div class="max-w-5xl bg-white rounded-[35px] shadow-2xl border border-slate-100 overflow-hidden">
+
+
+
+            <!-- HEADER -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-10 py-8 text-white">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-3xl font-black">
+                            Patient Details
+                        </h2>
+
+                        <p class="text-blue-100 mt-2">
+
+                            Update patient data carefully
+
+                        </p>
+
+                    </div>
+
+
+
+                    <div class="w-20 h-20 rounded-3xl bg-white/20 flex items-center justify-center text-4xl font-bold">
+
+                        {{ form.instance.name|slice:":1" }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+            <!-- FORM -->
+            <form method="POST"
+                  class="p-10">
+
+                {% csrf_token %}
+
+
+
+                <!-- GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+
+
+                    <!-- NAME -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Full Name
+
+                        </label>
+
+                        <input type="text"
+                               name="name"
+                               value="{{ form.instance.name }}"
+                               placeholder="Enter patient name"
+                               class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                    </div>
+
+
+
+
+
+
+                    <!-- PHONE -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Phone Number
+
+                        </label>
+
+                        <input type="text"
+                               name="phone"
+                               value="{{ form.instance.phone }}"
+                               placeholder="Enter phone number"
+                               class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                    </div>
+
+
+
+
+
+
+                    <!-- AGE -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Age
+
+                        </label>
+
+                        <input type="number"
+                               name="age"
+                               value="{{ form.instance.age }}"
+                               placeholder="Enter age"
+                               class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- GENDER -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Gender
+
+                        </label>
+
+                        <select name="gender"
+                                class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                            <option value="Male"
+                            {% if form.instance.gender == 'Male' %}
+                            selected
+                            {% endif %}>
+                                Male
+                            </option>
+
+                            <option value="Female"
+                            {% if form.instance.gender == 'Female' %}
+                            selected
+                            {% endif %}>
+                                Female
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- ADDRESS -->
+                <div class="mt-8">
+
+                    <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                        Address
+
+                    </label>
+
+                    <textarea name="address"
+                              rows="4"
+                              placeholder="Enter patient address"
+                              class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200 resize-none">{{ form.instance.address }}</textarea>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- EYE NOTES -->
+                <div class="mt-8">
+
+                    <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                        Eye Notes
+
+                    </label>
+
+                    <textarea name="eye_notes"
+                              rows="5"
+                              placeholder="Enter eye condition notes..."
+                              class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200 resize-none">{{ form.instance.eye_notes }}</textarea>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- INFO BOX -->
+                <div class="mt-8 bg-blue-50 border border-blue-100 rounded-3xl p-6">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="text-3xl">
+                            ℹ️
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-blue-900 text-lg">
+                                Patient Record
+                            </h3>
+
+                            <p class="text-blue-700 mt-2 leading-relaxed">
+
+                                Changes made here will update the patient history
+                                and future prescriptions automatically.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- BUTTONS -->
+                <div class="flex items-center justify-end gap-5 mt-10">
+
+
+
+                    <a href="{% url 'patient_detail' form.instance.id %}"
+                       class="bg-slate-200 hover:bg-slate-300 smooth text-slate-700 px-8 py-4 rounded-2xl font-bold">
+
+                        Cancel
+
+                    </a>
+
+
+
+
+
+                    <button type="submit"
+                            class="bg-gradient-to-r from-blue-600 to-indigo-700 hover:scale-[1.02] hover:shadow-2xl smooth text-white px-10 py-4 rounded-2xl font-bold shadow-xl">
+
+                        Update Patient
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

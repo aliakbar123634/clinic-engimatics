@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Medicine Detail - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover{
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white flex flex-col justify-between p-6 shadow-2xl">
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
+                        💊
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 mt-1 text-sm">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📊</span>
+
+                    Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">👨‍⚕️</span>
+
+                    Patients
+
+                </a>
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    <span class="text-xl">💊</span>
+
+                    Medicines
+
+                </a>
+
+
+
+                <a href="{% url 'create_prescription' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 font-medium smooth">
+
+                    <span class="text-xl">📄</span>
+
+                    Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-blue-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+
+
+            <form method="POST"
+                  action="{% url 'logout' %}"
+                  class="mt-5">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="w-full bg-red-500 hover:bg-red-600 smooth text-white py-3 rounded-2xl font-semibold shadow-lg">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+
+
+        <!-- TOP -->
+        <div class="flex justify-between items-center mb-10">
+
+            <div>
+
+                <h1 class="text-5xl font-black text-slate-900">
+                    Medicine Detail
+                </h1>
+
+                <p class="text-slate-500 mt-3 text-lg">
+
+                    View complete medicine information
+
+                </p>
+
+            </div>
+
+
+
+            <div class="flex gap-4">
+                {% if is_admin %}
+                <a href="{% url 'update_medicine' medicine.id %}"
+                   class="bg-blue-600 hover:bg-blue-700 smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                    Edit Medicine
+
+                </a>
+                {% endif %}
+
+                <a href="{% url 'medicine_list' %}"
+                   class="bg-slate-900 hover:bg-black smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                    ← Back
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- PROFILE CARD -->
+        <div class="bg-white rounded-[35px] shadow-2xl border border-slate-100 overflow-hidden mb-10 card-hover smooth">
+
+
+
+            <!-- HEADER -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-10 py-10 text-white">
+
+                <div class="flex items-center gap-8">
+
+
+
+                    <!-- AVATAR -->
+                    <div class="w-32 h-32 rounded-[35px] bg-white/20 backdrop-blur-lg flex items-center justify-center text-5xl font-black shadow-2xl">
+
+                        💊
+
+                    </div>
+
+
+
+
+
+                    <!-- INFO -->
+                    <div>
+
+                        <h2 class="text-5xl font-black">
+
+                            {{ medicine.name }}
+
+                        </h2>
+
+                        <p class="text-blue-100 text-xl mt-3">
+
+                            Medicine
+
+                        </p>
+
+
+
+                        <div class="flex gap-4 mt-6">
+
+                            <span class="bg-white/20 px-5 py-3 rounded-2xl font-semibold backdrop-blur-lg">
+
+                                Rs. {{ medicine.price }}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <!-- BODY -->
+            <div class="p-10">
+
+
+
+                <!-- GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+
+
+                    <!-- GENERIC NAME -->
+                    <div class="bg-slate-50 rounded-3xl p-7 border border-slate-100">
+
+                        <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">
+
+                            Generic Name
+
+                        </p>
+
+                        <h3 class="text-2xl font-black text-slate-900 mt-3">
+
+                            {{ medicine.generic_name|default:"Not specified" }}
+
+                        </h3>
+
+                    </div>
+
+
+
+
+
+                    <!-- COMPANY -->
+                    <div class="bg-slate-50 rounded-3xl p-7 border border-slate-100">
+
+                        <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">
+
+                            Company
+
+                        </p>
+
+                        <h3 class="text-2xl font-black text-slate-900 mt-3">
+
+                            {{ medicine.company|default:"Not specified" }}
+
+                        </h3>
+
+                    </div>
+
+
+
+
+
+                    <!-- PRICE -->
+                    <div class="bg-slate-50 rounded-3xl p-7 border border-slate-100">
+
+                        <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">
+
+                            Price
+
+                        </p>
+
+                        <h3 class="text-2xl font-black text-slate-900 mt-3">
+
+                            Rs. {{ medicine.price }}
+
+                        </h3>
+
+                    </div>
+
+
+
+
+
+                    <!-- CREATED -->
+                    <div class="bg-slate-50 rounded-3xl p-7 border border-slate-100">
+
+                        <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">
+
+                            Added Date
+
+                        </p>
+
+                        <h3 class="text-2xl font-black text-slate-900 mt-3">
+
+                            {{ medicine.created_at|date:"d M Y" }}
+
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- DESCRIPTION -->
+                <div class="mt-8 bg-blue-50 rounded-3xl p-8 border border-blue-100">
+
+                    <div class="flex items-start gap-5">
+
+                        <div class="text-4xl">
+                            💊
+                        </div>
+
+                        <div class="flex-1">
+
+                            <h3 class="text-2xl font-black text-slate-900 mb-4">
+
+                                Description
+
+                            </h3>
+
+                            <p class="text-slate-700 text-lg leading-relaxed">
+
+                                {{ medicine.description|default:"No description available." }}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

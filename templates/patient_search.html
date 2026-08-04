@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Search Patients</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-[#f4f7fb]">
+
+
+
+<div class="p-10">
+
+
+
+    <!-- TOP -->
+    <div class="flex justify-between items-center mb-10">
+
+        <div>
+
+            <h1 class="text-5xl font-black text-slate-900">
+                Search Results
+            </h1>
+
+            <p class="text-slate-500 mt-3 text-lg">
+
+                Results for:
+                <span class="font-bold text-blue-600">
+                    "{{ query }}"
+                </span>
+
+            </p>
+
+        </div>
+
+
+
+        <a href="{% url 'patient_list' %}"
+           class="bg-slate-900 hover:bg-black text-white px-7 py-4 rounded-2xl font-bold shadow-lg transition duration-300">
+
+            ← Back
+
+        </a>
+
+    </div>
+
+
+
+
+
+
+
+    <!-- SEARCH BAR -->
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 mb-8">
+
+        <form method="GET"
+              action="{% url 'patient_search' %}">
+
+            <div class="flex gap-4">
+
+                <input type="text"
+                       name="q"
+                       value="{{ query }}"
+                       placeholder="Search patient by name or phone..."
+                       class="flex-1 bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 rounded-2xl font-bold transition duration-300">
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- RESULTS -->
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+
+        <div class="flex justify-between items-center p-8 border-b border-slate-100">
+
+            <div>
+
+                <h2 class="text-2xl font-black text-slate-900">
+                    Patients Found
+                </h2>
+
+                <p class="text-slate-500 mt-1">
+                    Matching search results
+                </p>
+
+            </div>
+
+
+
+            <div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-bold">
+
+                {{ patients.count }} Results
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- TABLE -->
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead class="bg-slate-50">
+
+                    <tr>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Patient
+                        </th>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Phone
+                        </th>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Age
+                        </th>
+
+                        <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                            Gender
+                        </th>
+
+                        <th class="text-center px-8 py-5 text-slate-500 font-semibold">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+
+
+
+
+
+
+                <tbody>
+
+                    {% for patient in patients %}
+
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition duration-300">
+
+                        <td class="px-8 py-6">
+
+                            <div class="flex items-center gap-4">
+
+                                <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
+
+                                    {{ patient.name|slice:':1' }}
+
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-bold text-slate-900 text-lg">
+                                        {{ patient.name }}
+                                    </h3>
+
+                                    <p class="text-slate-400 text-sm">
+                                        Eye Patient
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+
+
+
+                        <td class="px-8 py-6 text-slate-600 font-medium">
+
+                            {{ patient.phone }}
+
+                        </td>
+
+
+
+
+
+                        <td class="px-8 py-6 text-slate-600 font-medium">
+
+                            {{ patient.age }}
+
+                        </td>
+
+
+
+
+
+                        <td class="px-8 py-6">
+
+                            <span class="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">
+
+                                {{ patient.gender }}
+
+                            </span>
+
+                        </td>
+
+
+
+
+
+
+                        <td class="px-8 py-6">
+
+                            <div class="flex items-center justify-center gap-3">
+
+                                <a href="{% url 'patient_detail' patient.id %}"
+                                   class="bg-slate-900 hover:bg-black text-white px-5 py-3 rounded-2xl font-semibold text-sm transition duration-300">
+
+                                    View
+
+                                </a>
+
+                                {% if is_admin %}
+                                <a href="{% url 'update_patient' patient.id %}"
+                                   class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-2xl font-semibold text-sm transition duration-300">
+
+                                    Edit
+
+                                </a>
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+
+
+
+
+
+
+
+                    <!-- EMPTY -->
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center py-20">
+
+                            <div class="flex flex-col items-center">
+
+                                <div class="text-7xl mb-5">
+                                    🔍
+                                </div>
+
+                                <h2 class="text-3xl font-black text-slate-900">
+                                    No Patients Found
+                                </h2>
+
+                                <p class="text-slate-500 mt-3">
+
+                                    No patient matched your search
+
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

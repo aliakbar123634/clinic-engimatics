@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Medicine - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white p-6 flex flex-col justify-between shadow-2xl">
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl">
+                        💊
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 text-sm mt-1">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    📊 Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    👨‍⚕️ Patients
+
+                </a>
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    💊 Medicines
+
+                </a>
+
+
+
+                <a href="{% url 'create_prescription' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    📄 Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-blue-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+
+
+            <form method="POST"
+                  action="{% url 'logout' %}"
+                  class="mt-5">
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="w-full bg-red-500 hover:bg-red-600 smooth text-white py-3 rounded-2xl font-semibold shadow-lg">
+
+                    Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+
+
+        <!-- TOP -->
+        <div class="flex justify-between items-center mb-10">
+
+            <div>
+
+                <h1 class="text-5xl font-black text-slate-900">
+                    Add Medicine
+                </h1>
+
+                <p class="text-slate-500 mt-3 text-lg">
+
+                    Add new medicine to clinic database
+
+                </p>
+
+            </div>
+
+
+
+            <a href="{% url 'medicine_list' %}"
+               class="bg-slate-900 hover:bg-black smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                ← Back
+
+            </a>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- FORM CARD -->
+        <div class="max-w-5xl bg-white rounded-[35px] shadow-2xl border border-slate-100 overflow-hidden">
+
+
+
+            <!-- HEADER -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-10 py-8 text-white">
+
+                <h2 class="text-3xl font-black">
+                    Medicine Information
+                </h2>
+
+                <p class="text-blue-100 mt-2">
+
+                    Fill all medicine details carefully
+
+                </p>
+
+            </div>
+
+
+
+
+
+
+
+            <!-- FORM -->
+            <form method="POST"
+                  class="p-10">
+
+                {% csrf_token %}
+
+
+
+                <!-- GLOBAL ERRORS -->
+                {% if form.non_field_errors %}
+
+                    <div class="mb-8 bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-2xl font-semibold">
+
+                        {{ form.non_field_errors }}
+
+                    </div>
+
+                {% endif %}
+
+
+
+
+
+
+
+                <!-- GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+
+
+                    <!-- NAME -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Medicine Name
+
+                        </label>
+
+                        <input type="text"
+                               name="name"
+                               value="{{ form.name.value|default:'' }}"
+                               placeholder="Enter medicine name"
+
+                               class="w-full rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 transition
+
+                               {% if form.name.errors %}
+                                   bg-red-50 border-2 border-red-400 focus:ring-red-200
+                               {% else %}
+                                   bg-slate-100 border-0 focus:ring-blue-200
+                               {% endif %}
+                               ">
+
+
+
+                        {% if form.name.errors %}
+
+                            <div class="mt-3 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm font-semibold">
+
+                                {{ form.name.errors.0 }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <!-- GENERIC -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Generic Name
+
+                        </label>
+
+                        <input type="text"
+                               name="generic_name"
+                               value="{{ form.generic_name.value|default:'' }}"
+                               placeholder="Enter generic name"
+
+                               class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <!-- COMPANY -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Company Name
+
+                        </label>
+
+                        <input type="text"
+                               name="company"
+                               value="{{ form.company.value|default:'' }}"
+                               placeholder="Enter company name"
+
+                               class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200">
+
+                    </div>
+
+
+
+
+
+
+
+
+                    <!-- PRICE -->
+                    <div>
+
+                        <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                            Price
+
+                        </label>
+
+                        <input type="number"
+                               step="0.01"
+                               name="price"
+                               value="{{ form.price.value|default:'' }}"
+                               placeholder="Enter medicine price"
+
+                               class="w-full rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 transition
+
+                               {% if form.price.errors %}
+                                   bg-red-50 border-2 border-red-400 focus:ring-red-200
+                               {% else %}
+                                   bg-slate-100 border-0 focus:ring-blue-200
+                               {% endif %}
+                               ">
+
+
+
+                        {% if form.price.errors %}
+
+                            <div class="mt-3 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm font-semibold">
+
+                                {{ form.price.errors.0 }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- DESCRIPTION -->
+                <div class="mt-8">
+
+                    <label class="block text-sm font-bold text-slate-700 mb-3">
+
+                        Description
+
+                    </label>
+
+                    <textarea name="description"
+                              rows="5"
+                              placeholder="Enter medicine description..."
+
+                              class="w-full bg-slate-100 border-0 rounded-2xl px-6 py-5 text-lg outline-none focus:ring-4 focus:ring-blue-200 resize-none">{{ form.description.value|default:'' }}</textarea>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- INFO BOX -->
+                <div class="mt-8 bg-blue-50 border border-blue-100 rounded-3xl p-6">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="text-3xl">
+                            💡
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-bold text-blue-900 text-lg">
+                                Medicine Database
+                            </h3>
+
+                            <p class="text-blue-700 mt-2 leading-relaxed">
+
+                                Medicines added here will appear in live search
+                                while creating prescriptions.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+                <!-- BUTTONS -->
+                <div class="flex items-center justify-end gap-5 mt-10">
+
+
+
+                    <a href="{% url 'medicine_list' %}"
+                       class="bg-slate-200 hover:bg-slate-300 smooth text-slate-700 px-8 py-4 rounded-2xl font-bold">
+
+                        Cancel
+
+                    </a>
+
+
+
+
+
+                    <button type="submit"
+                            class="bg-gradient-to-r from-blue-600 to-indigo-700 hover:scale-[1.02] hover:shadow-2xl smooth text-white px-10 py-4 rounded-2xl font-bold shadow-xl">
+
+                        Save Medicine
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Prescription Detail - EyeCare Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body{
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fb;
+        }
+
+        .smooth{
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<div class="flex min-h-screen">
+
+
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-950 text-white p-6 flex flex-col justify-between shadow-2xl">
+
+        <div>
+
+            <!-- LOGO -->
+            <div class="mb-14">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-3xl bg-blue-600 flex items-center justify-center text-3xl">
+                        👁️
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-3xl font-black">
+                            EyeCare Pro
+                        </h1>
+
+                        <p class="text-slate-400 text-sm mt-1">
+                            Clinic Management
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- NAV -->
+            <nav class="space-y-4">
+
+                <a href="{% url 'dashboard' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    📊 Dashboard
+
+                </a>
+
+
+
+                <a href="{% url 'patient_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    👨‍⚕️ Patients
+
+                </a>
+
+
+
+                <a href="{% url 'medicine_list' %}"
+                   class="flex items-center gap-4 hover:bg-slate-900 px-5 py-4 rounded-2xl text-slate-300 smooth">
+
+                    💊 Medicines
+
+                </a>
+
+
+
+                <a href="{% url 'visit_list' %}"
+                   class="flex items-center gap-4 bg-blue-600 px-5 py-4 rounded-2xl text-white font-semibold shadow-lg">
+
+                    📄 Prescriptions
+
+                </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+        <!-- PROFILE -->
+        <div class="bg-slate-900 rounded-3xl p-5 border border-slate-800">
+
+            <p class="text-slate-400 text-sm">
+                Logged In As
+            </p>
+
+            <h3 class="font-bold text-lg mt-2">
+                {{ request.user.username }}
+            </h3>
+
+            <p class="text-blue-400 text-sm mt-1">
+                {{ user_role }}
+            </p>
+
+        </div>
+
+    </aside>
+
+
+
+
+
+
+
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8 overflow-y-auto">
+
+
+
+        <!-- TOP -->
+        <div class="flex justify-between items-center mb-10">
+
+            <div>
+
+                <h1 class="text-5xl font-black text-slate-900">
+
+                    Prescription Detail
+
+                </h1>
+
+                <p class="text-slate-500 mt-3 text-lg">
+
+                    View complete prescription information
+
+                </p>
+
+            </div>
+
+
+
+
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex items-center gap-4">
+
+                <a href="{% url 'prescription_pdf' prescription.id %}"
+
+                   class="bg-emerald-500 hover:bg-emerald-600 smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                    Download PDF
+
+                </a>
+
+
+
+                <a href="{% url 'visit_list' %}"
+
+                   class="bg-slate-900 hover:bg-black smooth text-white px-7 py-4 rounded-2xl font-bold shadow-lg">
+
+                    Back
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- PATIENT CARD -->
+        <div class="bg-white rounded-[35px] shadow-2xl border border-slate-100 overflow-hidden mb-8">
+
+            <div class="px-10 py-7 border-b border-slate-100 bg-slate-50">
+
+                <h2 class="text-3xl font-black text-slate-900">
+
+                    Patient Information
+
+                </h2>
+
+            </div>
+
+
+
+
+
+
+
+            <div class="p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+
+
+
+                <!-- PATIENT -->
+                <div>
+
+                    <p class="text-slate-400 text-sm font-semibold mb-2">
+
+                        Patient Name
+
+                    </p>
+
+                    <h3 class="text-2xl font-black text-slate-900">
+
+                        {{ prescription.visit.patient.name }}
+
+                    </h3>
+
+                </div>
+
+
+
+
+
+
+
+                <!-- PHONE -->
+                <div>
+
+                    <p class="text-slate-400 text-sm font-semibold mb-2">
+
+                        Phone Number
+
+                    </p>
+
+                    <h3 class="text-xl font-bold text-slate-800">
+
+                        {{ prescription.visit.patient.phone }}
+
+                    </h3>
+
+                </div>
+
+
+
+
+
+
+
+                <!-- DOCTOR -->
+                <div>
+
+                    <p class="text-slate-400 text-sm font-semibold mb-2">
+
+                        Doctor
+
+                    </p>
+
+                    <h3 class="text-xl font-bold text-slate-800">
+
+                        {{ prescription.visit.doctor.username }}
+
+                    </h3>
+
+                </div>
+
+
+
+
+
+
+
+                <!-- DATE -->
+                <div>
+
+                    <p class="text-slate-400 text-sm font-semibold mb-2">
+
+                        Visit Date
+
+                    </p>
+
+                    <h3 class="text-xl font-bold text-slate-800">
+
+                        {{ prescription.visit.visit_date|date:"d M Y" }}
+
+                    </h3>
+
+                    <p class="text-slate-500 text-sm mt-1">
+
+                        {{ prescription.visit.visit_date|time:"h:i A" }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- COMPLAINTS & DIAGNOSIS -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+
+
+
+            <!-- COMPLAINTS -->
+            <div class="bg-white rounded-[35px] shadow-xl border border-slate-100 overflow-hidden">
+
+                <div class="px-8 py-6 border-b border-slate-100 bg-slate-50">
+
+                    <h2 class="text-2xl font-black text-slate-900">
+
+                        Complaints
+
+                    </h2>
+
+                </div>
+
+
+
+                <div class="p-8">
+
+                    <p class="text-slate-700 leading-relaxed text-lg">
+
+                        {{ prescription.visit.complaints|default:"No complaints added." }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+            <!-- DIAGNOSIS -->
+            <div class="bg-white rounded-[35px] shadow-xl border border-slate-100 overflow-hidden">
+
+                <div class="px-8 py-6 border-b border-slate-100 bg-slate-50">
+
+                    <h2 class="text-2xl font-black text-slate-900">
+
+                        Diagnosis
+
+                    </h2>
+
+                </div>
+
+
+
+                <div class="p-8">
+
+                    <p class="text-slate-700 leading-relaxed text-lg">
+
+                        {{ prescription.visit.diagnosis|default:"No diagnosis added." }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- MEDICINES -->
+        <div class="bg-white rounded-[35px] shadow-2xl border border-slate-100 overflow-hidden mb-8">
+
+            <div class="flex justify-between items-center px-10 py-7 border-b border-slate-100 bg-slate-50">
+
+                <div>
+
+                    <h2 class="text-3xl font-black text-slate-900">
+
+                        Prescribed Medicines
+
+                    </h2>
+
+                    <p class="text-slate-500 mt-2">
+
+                        Total prescribed medicines
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-bold">
+
+                    {{ items.count }} Medicines
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead class="bg-slate-50">
+
+                        <tr>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Medicine
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Dosage
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Frequency
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Duration
+                            </th>
+
+                            <th class="text-left px-8 py-5 text-slate-500 font-semibold">
+                                Notes
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+
+
+
+
+
+                    <tbody>
+
+                        {% for item in items %}
+
+                        <tr class="border-b border-slate-100 hover:bg-slate-50 smooth">
+
+
+
+
+                            <!-- MEDICINE -->
+                            <td class="px-8 py-6">
+
+                                <div class="flex items-center gap-4">
+
+                                    <div class="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl">
+
+                                        💊
+
+                                    </div>
+
+                                    <div>
+
+                                        <h3 class="font-bold text-slate-900 text-lg">
+
+                                            {{ item.medicine.name }}
+
+                                        </h3>
+
+                                        <p class="text-sm text-slate-500 mt-1">
+
+                                            {{ item.medicine.company }}
+
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+
+
+
+                            <!-- DOSAGE -->
+                            <td class="px-8 py-6">
+
+                                <span class="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl font-semibold">
+
+                                    {{ item.dosage }}
+
+                                </span>
+
+                            </td>
+
+
+
+
+
+                            <!-- FREQUENCY -->
+                            <td class="px-8 py-6 text-slate-700 font-semibold">
+
+                                {{ item.frequency }}
+
+                            </td>
+
+
+
+
+
+                            <!-- DURATION -->
+                            <td class="px-8 py-6 text-slate-700 font-semibold">
+
+                                {{ item.duration }}
+
+                            </td>
+
+
+
+
+
+                            <!-- NOTES -->
+                            <td class="px-8 py-6 text-slate-600">
+
+                                {{ item.notes|default:"-" }}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="5" class="py-20 text-center">
+
+                                <div class="flex flex-col items-center">
+
+                                    <div class="text-7xl mb-5">
+                                        💊
+                                    </div>
+
+                                    <h3 class="text-3xl font-black text-slate-900">
+
+                                        No Medicines Added
+
+                                    </h3>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+        <!-- INSTRUCTIONS -->
+        <div class="bg-white rounded-[35px] shadow-xl border border-slate-100 overflow-hidden">
+
+            <div class="px-10 py-7 border-b border-slate-100 bg-slate-50">
+
+                <h2 class="text-3xl font-black text-slate-900">
+
+                    Additional Instructions
+
+                </h2>
+
+            </div>
+
+
+
+
+
+
+
+            <div class="p-10">
+
+                <p class="text-slate-700 leading-relaxed text-lg">
+
+                    {{ prescription.instructions|default:"No additional instructions added." }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
